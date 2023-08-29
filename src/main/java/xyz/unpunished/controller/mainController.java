@@ -60,7 +60,6 @@ public class mainController implements Initializable {
         // value fields contain only numbers
         TextField[] fields = {minIDXField, minRPMField, maxIDXField, maxRPMField};
         for (TextField tf: fields){
-            tf.setText("0.00");
             tf.textProperty().addListener((observable, oldValue, newValue) -> {
                 try{
                     float x = Float.parseFloat(newValue);
