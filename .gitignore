@@ -27,6 +27,7 @@ hs_err_pid*
 *.exe
 *.gin
 /gin
+*.ini
 
 # IntelliJ IDEA #
 /.idea
