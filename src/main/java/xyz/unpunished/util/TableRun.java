@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import javafx.application.Platform;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FilenameUtils;
 
 public class TableRun implements Runnable{
 
@@ -55,7 +56,9 @@ public class TableRun implements Runnable{
                     "1", "2", "2" );
                 builder.directory(Paths.get(System.getProperty("user.dir"),
                         "gin").toFile());
-                builder.redirectErrorStream(true);
+                builder.inheritIO();
+                System.out.println("Encoding: " 
+                        + FilenameUtils.removeExtension(grains[i]) + ".gin...");
                 Process pr = builder.start();
                 pr.waitFor();
                 pr.destroy();

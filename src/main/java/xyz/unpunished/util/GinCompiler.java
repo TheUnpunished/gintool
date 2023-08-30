@@ -110,7 +110,8 @@ public class GinCompiler implements Runnable{
                         + "or move the files somewhere else"));
             return false;
         }
-        int threadCount = 50;
+        int threadCount = (int) Math.round(Math.sqrt(grains.length)) * 4;
+        threadCount = threadCount > 256 ? 256 : threadCount;
         TableRun[] tableRuns = new TableRun[threadCount];
         for (int i = 0; i < threadCount; i++){
             tableRuns[i] = new TableRun(usableGrainPath, i);
@@ -229,7 +230,7 @@ public class GinCompiler implements Runnable{
                 "atrim=start_sample=" + minIdx + ":end_sample=" + maxIdx,
                 cutWav.toString()    
         );
-        builder.redirectErrorStream(true);
+        builder.inheritIO();
 //        String cmd = "ffmpeg.exe"
 //                + " -i " + "\"" + wavFileField.getText() + "\""
 //                + " -map_metadata -1"
@@ -287,16 +288,8 @@ public class GinCompiler implements Runnable{
                     Integer.toString(fileCount)
             );
             builder.directory(Paths.get(wavPath).getParent().toFile());
+            builder.inheritIO();
             Process pr = builder.start();
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
-            String line = null;
-            while ((line = stdInput.readLine()) != null) {      
-                System.out.println(line);
-            }
-            while ((line = stdError.readLine()) != null) {
-                System.out.println(line);
-            }
             if(pr.waitFor() != 0)
                 throw new RuntimeException();
             pr.destroy();
