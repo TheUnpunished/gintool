@@ -18,3 +18,4 @@ After that, compiled jar will be located in _target_ folder. Enjoy!
 - 1.2.1: Added failsaves for gin_encode and gin2
 - 1.3 (initial commit): Major code refactoring. Fields now support decimals. Tool now uses/requires JDK/JRE 11 to be installed, potential accuracy improvements by porting algorithm of gin2.exe to java code, which also removes the requirement of gin2.exe, vcruntime140d.dll and ucrtbased.dll altogether
 - 1.3.1: Small UI changes, improved .ini logic, algorithmic number of threads calculation
+- 1.3.2: More UI changes, new fields for NFS Carbon and .ini stores more data
