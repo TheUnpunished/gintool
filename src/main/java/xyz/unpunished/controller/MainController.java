@@ -412,7 +412,7 @@ public class MainController implements Initializable {
                         "gintool",
                         "Information",
                         "Please select bin/java.exe inside of your JDK 11 "
-                        + "and ensure tmxtool.jar is in the same folder as tmxtool "
+                        + "and ensure tmxtool.jar is in the same folder as gintool "
                         + "to make sure it works");
             iniWorker.setJavaPath(browseFileOrDirectory(System.getProperty("user.dir"),
                     new String[]{"java.exe"}, new String[]{"Java Exectuable"}, false, false));
