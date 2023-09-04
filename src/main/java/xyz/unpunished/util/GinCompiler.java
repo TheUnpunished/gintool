@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,25 +27,30 @@ public class GinCompiler implements Runnable{
     
     private Button ginButton;
     private AlertWorker alertWorker;
-    private String wavPath, grainPath, exportPath;
+    private String wavPath, grainPath, exportPath, exportName;
     private String minIdx, minRPM, maxIdx, maxRPM;
-    private boolean decel;
+    private boolean grainPathSel, exportPathSel, exportNameSel, decel;
     
     private Path ginPath;
     private Path encoderPath;
     
     public GinCompiler(Button ginButton, String wavPath,
-            String grainPath, String exportPath,
+            String grainPath, String exportPath, String exportName,
             String minIdx, String minRPM, String maxIdx, String maxRPM,
+            boolean grainPathSel, boolean exportPathSel, boolean exportNameSel,
             boolean decel){
         this.ginButton = ginButton;
         this.wavPath = wavPath;
         this.grainPath = grainPath;
         this.exportPath = exportPath;
+        this.exportName = exportName;
         this.minIdx = minIdx;
         this.minRPM = minRPM;
         this.maxIdx = maxIdx;
         this.maxRPM = maxRPM;
+        this.grainPathSel = grainPathSel;
+        this.exportPathSel = exportPathSel;
+        this.exportNameSel = exportNameSel;
         this.decel = decel;
     }
 
@@ -75,10 +79,10 @@ public class GinCompiler implements Runnable{
     
     private boolean encodeGins(){
         File wav = new File(wavPath);
-        String usableGrainPath = (grainPath.equals(""))
-                ? Paths.get(FilenameUtils.removeExtension(wavPath))
-                        .toString()
-                : grainPath;
+        String usableGrainPath = grainPathSel
+                ? grainPath
+                : Paths.get(FilenameUtils.removeExtension(wavPath))
+                        .toString();
         encoderPath = Paths.get(System.getProperty("user.dir"),
                 "gin_encode.exe");
         String[] grains = new File(usableGrainPath).list();
@@ -167,14 +171,11 @@ public class GinCompiler implements Runnable{
             for(File gin: gins){
                 try(InputStream is = new BufferedInputStream
                         (new FileInputStream(gin))){
-                    byte[] buf = new byte[24];
+                    HexWorker.skip(is, 24);
+                    byte[] buf = new byte[4];
                     is.read(buf);
-                    buf = new byte[4];
-                    is.read(buf);
-                    ByteBuffer byteBuf = ByteBuffer.wrap(buf);
-                    byteBuf.order(ByteOrder.LITTLE_ENDIAN);
-                    sampleCount += byteBuf.getInt();
-                    byteBuf = ByteBuffer.allocate(4);
+                    sampleCount += HexWorker.readInt32Val(ByteOrder.LITTLE_ENDIAN, buf);
+                    ByteBuffer byteBuf = ByteBuffer.allocate(4);
                     byteBuf.order(ByteOrder.LITTLE_ENDIAN);
                     byteBuf.putInt(sampleCount);
                     os.write(byteBuf.array());
@@ -332,8 +333,9 @@ public class GinCompiler implements Runnable{
         int tableSize = (int) table.length();
         File gin = Paths.get(FilenameUtils.removeExtension(wavPath) 
                 + "_cut.gin").toFile();
-        File newGin = Paths.get(FilenameUtils.removeExtension(wavPath) 
-                + ".gin").toFile();
+        File newGin = exportNameSel 
+                ? Paths.get(Paths.get(wavPath).getParent().toString(), exportName).toFile()
+                : Paths.get(FilenameUtils.removeExtension(wavPath) + ".gin").toFile();
         try{
             int ginSize = (int) gin.length();
             InputStream tableIn = new BufferedInputStream(
@@ -345,8 +347,8 @@ public class GinCompiler implements Runnable{
             byte[] buf = new byte[240];
             ginIn.read(buf);
             newGinOut.write(buf);
+            HexWorker.skip(ginIn, tableSize);
             buf = new byte[tableSize];
-            ginIn.read(buf);
             tableIn.read(buf);
             newGinOut.write(buf);
             buf = new byte[ginSize - tableSize - 240];
@@ -382,9 +384,11 @@ public class GinCompiler implements Runnable{
         }
         try{
             Files.delete(gin.toPath());
-            Files.move(newGin.toPath(), (exportPath.equals("")) 
-                    ? newGin.toPath()
-                    : Paths.get(exportPath),
+            Files.move(newGin.toPath(), exportPathSel 
+                    ? exportNameSel 
+                        ? Paths.get(Paths.get(exportPath).getParent().toString(), exportName)
+                        : Paths.get(exportPath)
+                    : newGin.toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );
         }

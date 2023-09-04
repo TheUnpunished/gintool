@@ -16,14 +16,17 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.scene.layout.HBox;
+import lombok.Getter;
+import org.apache.commons.io.FilenameUtils;
 import xyz.unpunished.util.GinCompiler;
 
-public class mainController implements Initializable {
+@Getter
+public class MainController implements Initializable {
 
     private IniWorker iniWorker;
-    private boolean wipedToInt = false;
-    private boolean wipedToIntTwice = false;
-    
+    private Thread fileThread;
 
     @FXML
     private TextField wavFileField;
@@ -46,71 +49,180 @@ public class mainController implements Initializable {
     @FXML
     private CheckBox decelCB;
     @FXML
-    private Button grainPathButton;
+    private HBox grainPathHBox;
     @FXML
-    private Button exportPathButton;
+    private HBox exportPathHBox;
     @FXML
     private SplitPane splitPane;
     @FXML
     private Button ginButton;
+    @FXML
+    private CheckBox carbonPattern;
+    @FXML
+    private HBox carbonPatternHBox;
+    @FXML
+    private ComboBox<String> enExBox;
+    @FXML
+    private ComboBox<String> aclDclBox; 
+    @FXML
+    private TextField carNumberField;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // value fields contain only numbers
-        TextField[] fields = {minIDXField, minRPMField, maxIDXField, maxRPMField};
-        for (TextField tf: fields){
-            tf.textProperty().addListener((observable, oldValue, newValue) -> {
-                try{
-                    float x = Float.parseFloat(newValue);
-                }
-                catch(NumberFormatException ex){
-                    if(!newValue.equals(""))
-                        tf.setText(oldValue);
-                    return;
-                }
-                String[] newValueSplit = newValue.split("\\.", 2);
-                for(int i = 0; i < newValueSplit.length; i ++)
-                    newValueSplit[i] = newValueSplit[i].matches("\\d*") 
-                        ? newValueSplit[i]
-                        : newValueSplit[i].replaceAll("[^\\d]", "");
-                if(newValueSplit.length > 1)
-                    tf.setText(newValueSplit[0] + "." 
-                            + (newValueSplit[1].length() > 2
-                            ? newValueSplit[1].substring(0, 2)
-                            : newValueSplit[1]));
-                else
-                    if(!newValueSplit[0].equals(newValue))
-                        tf.setText(newValueSplit[0]);
-            });
-            tf.focusedProperty().addListener((ov, t, t1) -> {
-                if(!t1){
-                    String[] split = tf.getText().split("\\.", 2);
-                    if(split.length > 1 && split[1].equals(""))
-                        tf.setText(tf.getText() + "00");
-                }
-            });
-        }
-        // ini file
+        String[] enEx = new String[]{"en", "ex"};
+        String[] aclDcl = new String[]{"acl", "dcl"};
+                enExBox.setItems(FXCollections.observableArrayList(enEx));
+        aclDclBox.setItems(FXCollections.observableArrayList(aclDcl));
         iniWorker = new IniWorker("gintool.ini");
         setFieldValuesFromIni();
-        // checkbox listeners
-        grainPathCB.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-            grainPathField.setDisable(!t1);
-            grainPathButton.setDisable(!t1);
+        // value fields contain only numbers
+        minRPMField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
+                float x = Float.parseFloat(newValue);
+            }
+            catch(NumberFormatException ex){
+                if(!newValue.equals(""))
+                    minRPMField.setText(oldValue);
+                return;
+            }
+            String[] newValueSplit = newValue.split("\\.", 2);
+            for(int j = 0; j < newValueSplit.length; j ++)
+                newValueSplit[j] = newValueSplit[j].matches("\\d*") 
+                    ? newValueSplit[j]
+                    : newValueSplit[j].replaceAll("[^\\d]", "");
+            if(newValueSplit.length > 1)
+                minRPMField.setText(newValueSplit[0] + "." 
+                        + (newValueSplit[1].length() > 2
+                        ? newValueSplit[1].substring(0, 2)
+                        : newValueSplit[1]));
+            else
+                if(!newValueSplit[0].equals(newValue))
+                    minRPMField.setText(newValueSplit[0]);
+            iniWorker.setMinRPM(Float.parseFloat(minRPMField.getText()));
         });
-        exportPathCB.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-            exportPathField.setDisable(!t1);
-            exportPathButton.setDisable(!t1);
+        minRPMField.focusedProperty().addListener((ov, t, t1) -> {
+            if(!t1){
+                String[] split = minRPMField.getText().split("\\.", 2);
+                if(split.length > 1 && split[1].equals(""))
+                    minRPMField.setText(minRPMField.getText() + "00");
+            }
+            iniWorker.setMinRPM(Float.parseFloat(minRPMField.getText()));
+        });
+        maxRPMField.textProperty().addListener((observable, oldValue, newValue) -> {
+            try{
+                float x = Float.parseFloat(newValue);
+            }
+            catch(NumberFormatException ex){
+                if(!newValue.equals(""))
+                    maxRPMField.setText(oldValue);
+                return;
+            }
+            String[] newValueSplit = newValue.split("\\.", 2);
+            for(int j = 0; j < newValueSplit.length; j ++)
+                newValueSplit[j] = newValueSplit[j].matches("\\d*") 
+                    ? newValueSplit[j]
+                    : newValueSplit[j].replaceAll("[^\\d]", "");
+            if(newValueSplit.length > 1)
+                maxRPMField.setText(newValueSplit[0] + "." 
+                        + (newValueSplit[1].length() > 2
+                        ? newValueSplit[1].substring(0, 2)
+                        : newValueSplit[1]));
+            else
+                if(!newValueSplit[0].equals(newValue))
+                    maxRPMField.setText(newValueSplit[0]);
+            iniWorker.setMaxRPM(Float.parseFloat(maxRPMField.getText()));
+        });
+        maxRPMField.focusedProperty().addListener((ov, t, t1) -> {
+            if(!t1){
+                String[] split = maxRPMField.getText().split("\\.", 2);
+                if(split.length > 1 && split[1].equals(""))
+                    maxRPMField.setText(maxRPMField.getText() + "00");
+            }
+            iniWorker.setMaxRPM(Float.parseFloat(maxRPMField.getText()));
+        });
+        minIDXField.textProperty().addListener((ov, t, t1) -> {
+            if(!t1.matches("\\d*"))
+                minIDXField.setText(t1.replaceAll("[^\\d]", ""));
+            iniWorker.setMinIDX(Integer.parseInt(minIDXField.getText()));
+        });
+        maxIDXField.textProperty().addListener((ov, t, t1) -> {
+            if(!t1.matches("\\d*"))
+                maxIDXField.setText(t1.replaceAll("[^\\d]", ""));
+            iniWorker.setMaxIDX(Integer.parseInt(maxIDXField.getText()));
+        });
+        carNumberField.textProperty().addListener((ov, t, t1) -> {
+            if(!t1.matches("\\d*"))
+                carNumberField.setText(t1.replaceAll("[^\\d]", ""));
+            if(t1.length() > 3)
+                carNumberField.setText(t1.substring(1, 4));
+            if(t1.length() < 2)
+                carNumberField.setText("0" + t1);
+            iniWorker.setCarNumber(Integer.parseInt(carNumberField.getText()));
+        });
+        grainPathCB.selectedProperty().addListener((observableValue, t, t1) -> {
+            grainPathHBox.setDisable(t);
+            iniWorker.setGrainPathSel(t1);
+        });
+        exportPathCB.selectedProperty().addListener((observableValue, t, t1) -> {
+            exportPathHBox.setDisable(t);
+            iniWorker.setExportPathSel(t1);
         });
         splitPane.lookupAll(".split-pane-divider").stream()
                 .forEach(div ->  div.setMouseTransparent(true) );
+        carbonPattern.selectedProperty().addListener((ov, t, t1) -> {
+            carbonPatternHBox.setDisable(t);
+            iniWorker.setCarbonPattern(t1);
+        });
+        enExBox.getSelectionModel().selectedIndexProperty().addListener((ov, t, t1) -> {
+            iniWorker.setEnEx(t1.intValue());
+        });
+        aclDclBox.getSelectionModel().selectedIndexProperty().addListener((ov, t, t1) -> {
+            iniWorker.setAclDcl(t1.intValue());
+        });
+        decelCB.selectedProperty().addListener((ov, t, t1) -> {
+            iniWorker.setDecel(t1);
+        });
+        wavFileField.textProperty().addListener((ov, t, t1) -> {
+            iniWorker.setWavPath(t1);
+        });
+        grainPathField.textProperty().addListener((ov, t, t1) -> {
+            iniWorker.setGrainPath(t1);
+        });
+        exportPathField.textProperty().addListener((ov, t, t1) -> {
+            iniWorker.setExportPath(t1);
+        });
+        fileThread = new Thread(() -> {
+            try {
+                while (true){
+                    Thread.sleep(10000);
+                    iniWorker.rewriteIni(iniWorker.getDefaultIni());
+                }
+            } catch (InterruptedException ex) {
+                
+            }
+        });
+        fileThread.start();
     }
 
     private void setFieldValuesFromIni(){
         wavFileField.setText(iniWorker.getWavPath());
+        minRPMField.setText(String.format("%.2f", iniWorker.getMinRPM()));
+        minIDXField.setText(iniWorker.getMinIDX() + "");
+        maxRPMField.setText(String.format("%.2f", iniWorker.getMaxRPM()));
+        maxIDXField.setText(iniWorker.getMaxIDX() + "");
+        exportPathCB.setSelected(iniWorker.isExportPathSel());
+        exportPathHBox.setDisable(!iniWorker.isExportPathSel());
         exportPathField.setText(iniWorker.getExportPath());
+        grainPathCB.setSelected(iniWorker.isGrainPathSel());
+        grainPathHBox.setDisable(!iniWorker.isGrainPathSel());
         grainPathField.setText(iniWorker.getGrainPath());
+        carbonPattern.setSelected(iniWorker.isCarbonPattern());
+        carbonPatternHBox.setDisable(!iniWorker.isCarbonPattern());
+        enExBox.getSelectionModel().select(iniWorker.getEnEx());
+        aclDclBox.getSelectionModel().select(iniWorker.getAclDcl());
+        carNumberField.setText(String.format("%02d", iniWorker.getCarNumber()));
+        decelCB.setSelected(iniWorker.isDecel());
     }
 
     @FXML
@@ -121,12 +233,16 @@ public class mainController implements Initializable {
         Thread thread = new Thread(new GinCompiler(
             ginButton,
             wavFileField.getText(),
-            grainPathCB.isSelected() ? grainPathField.getText() : "",
-            exportPathCB.isSelected() ? exportPathField.getText() : "",
+            grainPathField.getText(),
+            exportPathField.getText(),
+            createExportName(),
             minIDXField.getText(),
             minRPMField.getText(),
             maxIDXField.getText(),
             maxRPMField.getText(),
+            grainPathCB.isSelected(),
+            exportPathCB.isSelected(),
+            carbonPattern.isSelected(),
             decelCB.isSelected()));
         thread.start();
     }
@@ -159,95 +275,147 @@ public class mainController implements Initializable {
             Platform.runLater(() -> ginButton.setDisable(false));
             return false;
         }
+        if(carbonPattern.isSelected() && carNumberField.getText().equals("")
+                && aclDclBox.getSelectionModel().getSelectedIndex() < 0
+                && enExBox.getSelectionModel().getSelectedIndex() < 0){
+            PlatformImpl.runAndWait(() 
+                    -> AlertWorker.showAlert(Alert.AlertType.ERROR,
+                        "gintool", "Error",
+                        "None of the checked optional fields should be empty"));
+            Platform.runLater(() -> ginButton.setDisable(false));
+            return false;
+        }
         return true;
+    }
+    
+    private String createExportName(){
+        return enExBox.getSelectionModel().getSelectedItem() + "_"
+                + aclDclBox.getSelectionModel().getSelectedItem() + "_"
+                + carNumberField.getText() + ".gin";
     }
 
     @FXML
     private void browseWav(){
-        File f = new File(wavFileField.getText());
-        FileChooser dc = new FileChooser();
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                "Waveform Audio File",
-                "*.wav");
-        dc.getExtensionFilters().add(filter);
-        if(f.exists())
-            dc.setInitialDirectory(new File(f.getParent()));
-        else
-            dc.setInitialDirectory(new File(System.getProperty("user.dir")));
-        try{
-            f = dc.showOpenDialog((Stage) wavFileField.getScene().getWindow());
-            if(f !=null && f.exists() && f.isFile()){
-                String wavPath = f.getAbsolutePath();
-                wavFileField.setText(wavPath);
-                iniWorker.setWavPath(wavPath);
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            AlertWorker.showAlert(
-                    Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Selected file doesn't exist"
-            );
-        }
+        wavFileField.setText(browseFileOrDirectory(wavFileField.getText(),
+                new String[]{"*.wav"},
+                new String[]{"Waveform Audio File"},
+                false,
+                false));
     }
 
     @FXML
     private void browseGrainPath(){
-        File f = new File(grainPathField.getText());
-        DirectoryChooser dc = new DirectoryChooser();
-        if(f.exists())
-            dc.setInitialDirectory(new File(f.getParent()));
-        else
-            dc.setInitialDirectory(new File(System.getProperty("user.dir")));
-        try{
-            f = dc.showDialog(grainPathField.getScene().getWindow());
-            if(f !=null && f.exists() && f.isDirectory()){
-                String grainPath = f.getAbsolutePath();
-                grainPathField.setText(grainPath);
-                iniWorker.setGrainPath(grainPath);
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            AlertWorker.showAlert(
-                    Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Selected directory doesn't exist"
-            );
-        }
+        grainPathField.setText(browseFileOrDirectory(grainPathField.getText(),
+                new String[]{"*.wav"},
+                new String[]{"Waveform Audio File"},
+                false,
+                true));
     }
 
     @FXML
     private void browseExportPath(){
-        File f = new File(exportPathField.getText());
-        FileChooser fc = new FileChooser();
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                "GIN Audio File",
-                "*.gin");
-        fc.getExtensionFilters().add(filter);
-        if(f.exists())
-            fc.setInitialDirectory(new File(f.getParent()));
-        else
-            fc.setInitialDirectory(new File(System.getProperty("user.dir")));
-        try{
-            f = fc.showSaveDialog(exportPathField.getScene().getWindow());
-            if(f != null){
-                String exportPath = f.getAbsolutePath();
-                iniWorker.setExportPath(exportPath);
-                exportPathField.setText(exportPath);
+        exportPathField.setText(browseFileOrDirectory(exportPathField.getText(),
+                new String[]{"*.gin"},
+                new String[]{"Ginsu Audio File"},
+                true,
+                false));
+    }
+    
+    private String browseFileOrDirectory(String initialDirectory, String[] fileTypes, String[] fileTypeNames,
+            boolean save, boolean directory){
+        File f = new File(initialDirectory);
+        if(directory){
+            DirectoryChooser dc = new DirectoryChooser();
+            if(f.exists()){
+                Path p = Paths.get(f.getAbsolutePath());
+                dc.setInitialDirectory(new File(p.getParent().toString()));
+            }
+            else{
+                dc.setInitialDirectory(new File(System.getProperty("user.dir")));
+            }
+            try{
+                f = dc.showDialog((Stage) minIDXField.getScene().getWindow());
+                if((f.exists() && f.isDirectory()))
+                    return f.getAbsolutePath();
+                else
+                    return initialDirectory;
+            }
+            catch (Exception e){
+                return initialDirectory;
             }
         }
-        catch (Exception e){
-            e.printStackTrace();
+        else{
+            FileChooser fc = new FileChooser();
+            for(int i = 0; i < fileTypes.length; i ++){
+                FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
+                    fileTypeNames[i],
+                    fileTypes[i]);
+                fc.getExtensionFilters().add(filter);
+            }
+            if(fileTypes.length > 1){
+                FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
+                        "All Supported Audio Files",
+                        fileTypes
+                );
+                fc.getExtensionFilters().add(filter);
+            }
+            if(f.exists()){
+                Path p = Paths.get(f.getAbsolutePath());
+                fc.setInitialDirectory(new File(p.getParent().toString()));
+            }
+            else{
+                fc.setInitialDirectory(new File(System.getProperty("user.dir")));
+            }
+            try{
+                if(save)
+                    f = fc.showSaveDialog((Stage) minIDXField.getScene().getWindow());
+                else
+                    f = fc.showOpenDialog((Stage) minIDXField.getScene().getWindow());
+                if((f.exists() && f.isFile()) || save)
+                    return f.getAbsolutePath();
+                else
+                    return initialDirectory;
+            }
+            catch (Exception e){
+                return initialDirectory;
+            }
+        }
+    }
+    
+    @FXML
+    private void launchTmxTool(){
+        if (iniWorker.getJavaPath() != null 
+                && FilenameUtils.getName(iniWorker.getJavaPath())
+                        .toLowerCase().equals("java.exe")){
+            ProcessBuilder builder = new ProcessBuilder(iniWorker.getJavaPath(),
+                "-jar",
+                Paths.get(System.getProperty("user.dir"), "gintool.jar").toString());
+            builder = builder.inheritIO();
+            builder = builder.directory(new File(System.getProperty("user.dir")));
+            try{
+                builder.start();
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+                AlertWorker.showAlert(
+                        Alert.AlertType.ERROR,
+                        "gintool",
+                        "Error",
+                        "File error: tmxtool.jar or "
+                        + "java.exe doesn't exist or process failed to start");
+                iniWorker.setJavaPath("");
+            }
+        }
+        else{
             AlertWorker.showAlert(
-                    Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Selected directory doesn't exist"
-            );
+                        Alert.AlertType.INFORMATION,
+                        "gintool",
+                        "Information",
+                        "Please select bin/java.exe inside of your JDK 11 "
+                        + "and ensure tmxtool.jar is in the same folder as tmxtool "
+                        + "to make sure it works");
+            iniWorker.setJavaPath(browseFileOrDirectory(System.getProperty("user.dir"),
+                    new String[]{"java.exe"}, new String[]{"Java Exectuable"}, false, false));
         }
     }
 }
