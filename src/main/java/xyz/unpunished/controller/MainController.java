@@ -389,7 +389,7 @@ public class MainController implements Initializable {
                         .toLowerCase().equals("java.exe")){
             ProcessBuilder builder = new ProcessBuilder(iniWorker.getJavaPath(),
                 "-jar",
-                Paths.get(System.getProperty("user.dir"), "txtool.jar").toString());
+                Paths.get(System.getProperty("user.dir"), "tmxtool.jar").toString());
             builder = builder.inheritIO();
             builder = builder.directory(new File(System.getProperty("user.dir")));
             try{
