@@ -22,4 +22,4 @@ After that, compiled jar will be located in _target_ folder. Enjoy!
 - 1.3.3: UI changes, multilanguage support, rewritten "Launch TMXTool" logic
 
 ## Contributing
-If you want to contribute to the project (add a translation, etc.), don't hesitate to make pull requests. Example messages file can be seen here: [messages_en.properties](../blob/master/src/main/resources/i18n/messages_en.properties)
+If you want to contribute to the project (add a translation, etc.), don't hesitate to make pull requests. Example messages file can be seen here: [messages_en.properties](../master/src/main/resources/i18n/messages_en.properties)
