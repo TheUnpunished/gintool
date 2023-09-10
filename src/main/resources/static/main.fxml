@@ -56,7 +56,11 @@
                         </VBox>
                      </children>
                   </VBox>
-                  <Button fx:id="ginButton" layoutX="52.0" layoutY="259.0" maxWidth="180.0" mnemonicParsing="false" onAction="#compileGin" text="%generate_gin" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" />
+                  <HBox alignment="CENTER" layoutX="52.0" layoutY="303.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                     <children>
+                        <Button fx:id="ginButton" maxWidth="180.0" mnemonicParsing="false" onAction="#compileGin" text="%generate_gin" textAlignment="CENTER" />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="298.0" prefWidth="300.0" SplitPane.resizableWithParent="false">
