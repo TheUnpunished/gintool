@@ -17,8 +17,8 @@ public class AlertWorker {
         this.grainCount = grainCount;
         this.currentGrain = 0;
         alert = new Alert(Alert.AlertType.NONE);
-        alert.setTitle("gintool");
-        alert.setHeaderText("Encoding grains...");
+        alert.setTitle(I18N.get("tool_name"));
+        alert.setHeaderText(I18N.get("encoding_grains"));
         alert.setResult(ButtonType.OK);
     }
 
@@ -32,20 +32,20 @@ public class AlertWorker {
 
     public void incrementGrain(){
         alert.setContentText(Integer.toString(1 + currentGrain++)
-                + " of "
+                + "/"
                 + Integer.toString(grainCount));
     }
     
     public Alert getAlert(){
         return AlertWorker.alert;
     }
-
-    public static void showAlert(Alert.AlertType type, String title, String headerText, String mainText){
+    
+    public static void showAlert(Alert.AlertType type, String headerText, String mainText){
         Alert alertToShow = new Alert(type);
-        alertToShow.setTitle(title);
+        alertToShow.setTitle(I18N.get("tool_name"));
         alertToShow.setHeaderText(headerText);
         alertToShow.setContentText(mainText);
         alertToShow.showAndWait();
     }
-
+    
 }

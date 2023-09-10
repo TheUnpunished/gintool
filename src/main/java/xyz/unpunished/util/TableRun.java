@@ -57,8 +57,6 @@ public class TableRun implements Runnable{
                 builder.directory(Paths.get(System.getProperty("user.dir"),
                         "gin").toFile());
                 builder.inheritIO();
-                System.out.println("Encoding: " 
-                        + FilenameUtils.removeExtension(grains[i]) + ".gin...");
                 Process pr = builder.start();
                 pr.waitFor();
                 pr.destroy();

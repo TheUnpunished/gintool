@@ -14,81 +14,81 @@
    <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.5" layoutX="83.0" layoutY="49.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane maxWidth="200.0" minHeight="0.0" minWidth="0.0" prefHeight="298.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
+          <AnchorPane maxWidth="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Label layoutX="10.0" layoutY="14.0" text="Main" AnchorPane.leftAnchor="10.0" />
-                  <VBox layoutX="10.0" layoutY="42.0" spacing="3.0">
+                  <Label layoutX="10.0" layoutY="14.0" maxWidth="180.0" text="%main" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <VBox layoutX="10.0" layoutY="42.0" maxWidth="180.0" spacing="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="40.0">
                      <children>
-                        <VBox spacing="3.0">
+                        <VBox maxWidth="180.0" spacing="3.0">
                            <children>
-                              <Label text="wav file" />
-                              <HBox>
+                              <Label maxWidth="180.0" text="%wav_file" />
+                              <HBox spacing="5.0">
                                  <children>
-                                    <TextField fx:id="wavFileField" editable="false" prefHeight="25.0" prefWidth="142.0" />
-                                    <Button ellipsisString="B" mnemonicParsing="false" onAction="#browseWav" prefHeight="25.0" prefWidth="29.0" text="..." />
+                                    <TextField fx:id="wavFileField" editable="false" />
+                                    <Button ellipsisString="B" mnemonicParsing="false" onAction="#browseWav" prefWidth="30.0" text="..." />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                         <VBox spacing="3.0">
                            <children>
-                              <Label text="min Idx" />
-                              <TextField fx:id="minIDXField" prefHeight="25.0" prefWidth="172.0" />
+                              <Label maxWidth="180.0" text="%min_idx" />
+                              <TextField fx:id="minIDXField" />
                            </children>
                         </VBox>
                         <VBox spacing="3.0">
                            <children>
-                              <Label text="min RPM" />
-                              <TextField fx:id="minRPMField" prefHeight="25.0" prefWidth="172.0" />
+                              <Label maxWidth="180.0" text="%min_rpm" />
+                              <TextField fx:id="minRPMField" />
                            </children>
                         </VBox>
                         <VBox spacing="3.0">
                            <children>
-                              <Label text="max Idx" />
-                              <TextField fx:id="maxIDXField" prefHeight="25.0" prefWidth="172.0" />
+                              <Label maxWidth="180.0" text="%max_idx" />
+                              <TextField fx:id="maxIDXField" />
                            </children>
                         </VBox>
                         <VBox spacing="3.0">
                            <children>
-                              <Label text="max RPM" />
-                              <TextField fx:id="maxRPMField" prefHeight="25.0" prefWidth="172.0" />
+                              <Label maxWidth="180.0" text="%max_rpm" />
+                              <TextField fx:id="maxRPMField" />
                            </children>
                         </VBox>
                      </children>
                   </VBox>
-                  <Button fx:id="ginButton" layoutX="52.0" layoutY="259.0" mnemonicParsing="false" onAction="#compileGin" text="Generate GIN" AnchorPane.bottomAnchor="10.0" />
+                  <Button fx:id="ginButton" layoutX="52.0" layoutY="259.0" maxWidth="180.0" mnemonicParsing="false" onAction="#compileGin" text="%generate_gin" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="298.0" prefWidth="300.0" SplitPane.resizableWithParent="false">
                <children>
-                  <Label layoutX="10.0" layoutY="14.0" text="Optional" AnchorPane.leftAnchor="10.0" />
-                  <VBox layoutX="10.0" layoutY="54.0" spacing="10.0">
+                  <Label layoutX="10.0" layoutY="14.0" text="%optional" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
+                  <VBox layoutX="10.0" layoutY="54.0" spacing="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="43.0">
                      <children>
                         <VBox spacing="5.0">
                            <children>
-                              <CheckBox fx:id="grainPathCB" mnemonicParsing="false" text="Custom grain path" />
-                              <HBox fx:id="grainPathHBox">
+                              <CheckBox fx:id="grainPathCB" maxWidth="280.0" mnemonicParsing="false" text="%custom_grain_path" />
+                              <HBox fx:id="grainPathHBox" spacing="5.0">
                                  <children>
-                                    <TextField fx:id="grainPathField" prefHeight="25.0" prefWidth="195.0" />
-                                    <Button fx:id="grainPathButton" ellipsisString="B" mnemonicParsing="false" onAction="#browseGrainPath" prefHeight="25.0" prefWidth="29.0" text="..." />
+                                    <TextField fx:id="grainPathField" prefWidth="195.0" />
+                                    <Button fx:id="grainPathButton" ellipsisString="B" mnemonicParsing="false" onAction="#browseGrainPath" prefWidth="29.0" text="..." />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                         <VBox spacing="5.0">
                            <children>
-                              <CheckBox fx:id="exportPathCB" mnemonicParsing="false" text="Custom export path" />
-                              <HBox fx:id="exportPathHBox">
+                              <CheckBox fx:id="exportPathCB" maxWidth="280.0" mnemonicParsing="false" text="%custom_export_path" />
+                              <HBox fx:id="exportPathHBox" spacing="5.0">
                                  <children>
-                                    <TextField fx:id="exportPathField" prefHeight="25.0" prefWidth="195.0" />
-                                    <Button fx:id="exportPathButton" ellipsisString="B" mnemonicParsing="false" onAction="#browseExportPath" prefHeight="25.0" prefWidth="29.0" text="..." />
+                                    <TextField fx:id="exportPathField" prefWidth="195.0" />
+                                    <Button fx:id="exportPathButton" ellipsisString="B" mnemonicParsing="false" onAction="#browseExportPath" prefWidth="29.0" text="..." />
                                  </children>
                               </HBox>
                            </children>
                         </VBox>
                         <VBox spacing="5.0">
                            <children>
-                              <CheckBox fx:id="carbonPattern" mnemonicParsing="false" text="Carbon name pattern" />
+                              <CheckBox fx:id="carbonPattern" maxWidth="280.0" mnemonicParsing="false" text="%carbon_name_pattern" />
                               <HBox fx:id="carbonPatternHBox" alignment="BOTTOM_LEFT">
                                  <children>
                                     <ComboBox fx:id="enExBox" prefWidth="60.0" />
@@ -101,16 +101,17 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <CheckBox fx:id="decelCB" mnemonicParsing="false" text="Deceleration" />
+                        <CheckBox fx:id="decelCB" maxWidth="280.0" mnemonicParsing="false" text="%deceleration" />
+                        <ComboBox fx:id="languageBox" prefWidth="280.0" promptText="%language" />
                      </children>
                   </VBox>
-                  <VBox alignment="TOP_RIGHT" layoutX="77.0" layoutY="302.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                  <VBox alignment="CENTER_RIGHT" layoutX="77.0" layoutY="302.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="10.0">
                      <children>
-                        <Label text="v1.3.2" />
-                        <Label text="by The_Unpunished" />
+                        <Label alignment="CENTER_RIGHT" maxWidth="175.0" text="%version" textAlignment="RIGHT" />
+                        <Label alignment="CENTER_RIGHT" maxWidth="175.0" text="%by" textAlignment="RIGHT" />
                      </children>
                   </VBox>
-                  <Button layoutX="4.0" layoutY="299.0" mnemonicParsing="false" onAction="#launchTmxTool" text="Launch TMXTool" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
+                  <Button layoutX="4.0" layoutY="299.0" maxWidth="105.0" mnemonicParsing="false" onAction="#launchTmxTool" text="%launch_tmxtool" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" />
                </children>
             </AnchorPane>
         </items>

@@ -68,9 +68,8 @@ public class GinCompiler implements Runnable{
                             alertWorker.close();
                             AlertWorker.showAlert(
                                 Alert.AlertType.INFORMATION,
-                                "gintool",
-                                "Success",
-                                "GIN has been encoded");
+                                I18N.get("success"),
+                                I18N.get("gin_encoded"));
                         });
             }
         }
@@ -93,9 +92,8 @@ public class GinCompiler implements Runnable{
         if(grains.length == 0){
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                 Alert.AlertType.ERROR,
-                "gintool",
-                "Error",
-                "Grains not found"));
+                I18N.get("error"),
+                I18N.get("grains_not_found")));
             return false;
         }
         try{
@@ -107,11 +105,8 @@ public class GinCompiler implements Runnable{
             ex.printStackTrace();
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: failed to create a gin directory. "
-                        + "Check if gintool has necessary permissions"
-                        + "or move the files somewhere else"));
+                    I18N.get("error"),
+                    I18N.get("failed_create_gin_dir")));
             return false;
         }
         int threadCount = (int) Math.round(Math.sqrt(grains.length)) * 4;
@@ -143,11 +138,8 @@ public class GinCompiler implements Runnable{
                 alertWorker.close();
                 AlertWorker.showAlert(
                         Alert.AlertType.ERROR,
-                        "gintool",
-                        "Error",
-                        "Runtime error: one or more grains failed to encode. "+
-                            "Check if gin_encode is installed " +
-                            "and supported on your system");
+                        I18N.get("error"),
+                        I18N.get("failed_encode_gins"));
             });
         }
         return tableRuns[0].isRes();
@@ -155,7 +147,7 @@ public class GinCompiler implements Runnable{
     
     private int compileTable(){
         Platform.runLater(() -> alertWorker.getAlert()
-                .setHeaderText("Compiling table..."));
+                .setHeaderText(I18N.get("compiling_table")));
         Platform.runLater(() -> alertWorker.getAlert()
                 .setContentText(""));
         File[] gins = ginPath.toFile()
@@ -187,9 +179,8 @@ public class GinCompiler implements Runnable{
                         alertWorker.close();
                         AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: Couldn't read one of the grains");
+                    I18N.get("error"),
+                    I18N.get("couldnt_read_grains"));
                     });
                     return -1;
                 }
@@ -203,9 +194,8 @@ public class GinCompiler implements Runnable{
                         alertWorker.close();
                         AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: Couldn't write into table");
+                    I18N.get("error"),
+                    I18N.get("couldnt_write_table"));
                     });
             return -1;
         }
@@ -214,7 +204,7 @@ public class GinCompiler implements Runnable{
     
     private String compileGinFromWav(int fileCount){
         Platform.runLater(() -> alertWorker.getAlert()
-                .setHeaderText("Compiling WAV and GIN..."));
+                .setHeaderText(I18N.get("compiling_wav_gin")));
         Platform.runLater(() -> alertWorker.getAlert()
                 .setContentText(""));
         File wav = new File(wavPath);
@@ -232,13 +222,6 @@ public class GinCompiler implements Runnable{
                 cutWav.toString()    
         );
         builder.inheritIO();
-//        String cmd = "ffmpeg.exe"
-//                + " -i " + "\"" + wavFileField.getText() + "\""
-//                + " -map_metadata -1"
-//                + " -fflags +bitexact -flags:v +bitexact -flags:a +bitexact"
-//                + " -af atrim=start_sample=" + minIDXField.getText()
-//                + ":end_sample=" + maxIDXField.getText()
-//                + " \"" + cutName + "_cut.wav" + "\"";
         try{
             if(Files.exists(cutWav))
                 Files.delete(cutWav);
@@ -252,10 +235,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: Couldn't delete cut "
-                    + "WAV and GIN before encoding new ones"));
+                    I18N.get("error"),
+                    I18N.get("failed_to_delete_cut_wav_gin")));
             return "";
         }
         try {
@@ -269,19 +250,11 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Runtime error: check if FFMPEG is installed "
-                    + "and supported on your system"));
+                    I18N.get("error"),
+                    I18N.get("ffmpeg_error")));
             return "";
         }
         try {
-//            cmd = "gin_encode.exe "
-//                    + "\"" + cutName + "_cut.wav" + "\""
-//                    + " " + ((decelCB.isSelected() ? maxRPMField.getText() : minRPMField.getText()))
-//                    + " " + ((decelCB.isSelected() ? minRPMField.getText() : maxRPMField.getText()))
-//                    + " " + fileCount
-//            ;
             builder = new ProcessBuilder(encoderPath.toString(),
                     cutWav.toString(),
                     decel ? maxRPM : minRPM,
@@ -300,10 +273,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Runtime error: check if gin_encode is installed "
-                    + "and supported on your system"));
+                    I18N.get("error"),
+                    I18N.get("gin_encode_error")));
             return "";
         }
         try{
@@ -314,10 +285,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: couldn't delete cut "
-                    + "WAV after encoding temporary GIN"));
+                    I18N.get("error"),
+                    I18N.get("failed_to_delete_cut_wav")));
             return "";
         }
         return cutWav.toString();
@@ -325,7 +294,7 @@ public class GinCompiler implements Runnable{
 
     private boolean insertTableAndMove(String cutName){
         Platform.runLater(() -> alertWorker.getAlert()
-                .setHeaderText("Inserting table..."));
+                .setHeaderText(I18N.get("inserting_table")));
         Platform.runLater(() -> alertWorker.getAlert()
                 .setContentText(""));
         File table = Paths.get(ginPath.toString(), "table.gin")
@@ -365,10 +334,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "Array of negative size detected. "
-                    + "Check your Main values"));
+                    I18N.get("error"),
+                    I18N.get("negative_size_array")));
             return false;
         }
         catch (Exception ex){
@@ -376,10 +343,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: couldn't perform necessary "
-                    + "table operations"));
+                    I18N.get("error"),
+                    I18N.get("table_operations_error")));
             return false;
         }
         try{
@@ -397,10 +362,8 @@ public class GinCompiler implements Runnable{
             PlatformImpl.runLater(() -> {alertWorker.close();});
             PlatformImpl.runAndWait(() -> AlertWorker.showAlert(
                     Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "File error: couldn't move output "
-                    + "file to final export location"));
+                    I18N.get("error"),
+                    I18N.get("move_final_gin_error")));
             return false;
         }
         return true;

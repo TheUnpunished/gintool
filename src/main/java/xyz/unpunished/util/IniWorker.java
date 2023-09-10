@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import lombok.Getter;
 
 import java.io.*;
+import java.util.Locale;
 import lombok.Setter;
 
 @Getter
@@ -25,7 +26,8 @@ public class IniWorker {
     private int carNumber;
     private int enEx;
     private int aclDcl;
-    private String javaPath;
+    private boolean firstLaunch;
+    private Locale locale;
 
     public IniWorker(String iniName){
         defaultIni = new File(iniName);
@@ -53,7 +55,8 @@ public class IniWorker {
         carNumber = 0;
         enEx = 0;
         aclDcl = 0;
-        javaPath = "";
+        firstLaunch = true;
+        locale = Locale.ENGLISH;
     }
 
     private void readIniFile(File ini){
@@ -81,21 +84,22 @@ public class IniWorker {
             enEx = enEx < 0 || enEx > 1 ? 0 : enEx;
             aclDcl = Integer.parseInt(readLine(reader));
             aclDcl = aclDcl < 0 || aclDcl > 1 ? 0 : aclDcl;
-            javaPath = readLine(reader);
+            firstLaunch = Boolean.parseBoolean(readLine(reader));
+            locale = Locale.forLanguageTag(readLine(reader));
             reader.close();
         }
-        catch (IOException | NullPointerException | NumberFormatException e){
+        catch (IOException | NullPointerException | NumberFormatException | IndexOutOfBoundsException e){
             e.printStackTrace();
             initIni();
-            AlertWorker.showAlert(Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "gintool couldn't read .ini file");
+            AlertWorker.showAlert(
+                    Alert.AlertType.ERROR,
+                    I18N.get("error"),
+                    I18N.get("couldnt_read_ini"));
             rewriteIni(defaultIni);
         }
     }
     
-    private String readLine(BufferedReader reader) throws IOException{
+    private String readLine(BufferedReader reader) throws IOException, IndexOutOfBoundsException{
         return reader.readLine().split("\\s+=\\s+", 2)[1];
     }
 
@@ -106,9 +110,9 @@ public class IniWorker {
             bw.write("grainPath = " + grainPath); bw.newLine();
             bw.write("exportPath = " + exportPath); bw.newLine();
             bw.write("minIDX = " + minIDX); bw.newLine();
-            bw.write("minRPM = " + String.format("%.2f", minRPM)); bw.newLine();
+            bw.write("minRPM = " + String.format(Locale.ENGLISH, "%.2f", minRPM)); bw.newLine();
             bw.write("maxIDX = " + maxIDX); bw.newLine();
-            bw.write("maxRPM = " + String.format("%.2f", maxRPM)); bw.newLine();
+            bw.write("maxRPM = " + String.format(Locale.ENGLISH, "%.2f", maxRPM)); bw.newLine();
             bw.write("grainPathSel = " + grainPathSel); bw.newLine();
             bw.write("exportPathSel = " + exportPathSel); bw.newLine();
             bw.write("decel = " + decel); bw.newLine();
@@ -116,16 +120,17 @@ public class IniWorker {
             bw.write("carNumber = " + carNumber); bw.newLine();
             bw.write("enEx = " + enEx); bw.newLine();
             bw.write("aclDcl = " + aclDcl); bw.newLine();
-            bw.write("javaPath = " + javaPath); bw.newLine();
+            bw.write("firstLaunch = " + firstLaunch); bw.newLine();
+            bw.write("locale = " + locale.toLanguageTag());
             bw.flush();
             bw.close();
         }
         catch (IOException e){
             e.printStackTrace();
-            AlertWorker.showAlert(Alert.AlertType.ERROR,
-                    "gintool",
-                    "Error",
-                    "gintool failed to write to .ini file");
+            AlertWorker.showAlert(
+                    Alert.AlertType.ERROR,
+                    I18N.get("error"),
+                    I18N.get("couldnt_write_ini"));
         }
     }
 
