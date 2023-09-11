@@ -15,7 +15,12 @@ public final class I18N {
     private static Locale locale = Locale.ENGLISH;
     
     public static List<Locale> getSupportedLocales() {
-        return new ArrayList<>(Arrays.asList(Locale.ENGLISH, new Locale("ru", "RU"), new Locale("es", "ES")));
+        return new ArrayList<>(Arrays.asList(
+                Locale.ENGLISH,
+                new Locale("ru", "RU"),
+                new Locale("es", "US"),
+                new Locale("hr", "HR"),
+                Locale.GERMAN));
     }
     
     
@@ -30,6 +35,7 @@ public final class I18N {
 
     public static void setLocale(Locale newLocale) {
         locale = newLocale;
+        Locale.setDefault(newLocale);
     }
     
     public static String get(final String key, final Object... args) {

@@ -19,14 +19,10 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import lombok.Getter;
-import org.apache.commons.io.FilenameUtils;
 import xyz.unpunished.util.GinCompiler;
 
 @Getter
@@ -34,7 +30,6 @@ public class MainController implements Initializable {
 
     private IniWorker iniWorker;
     private Thread fileThread;
-    private Locale previousLocale = Locale.ENGLISH;
     
     @FXML
     private TextField wavFileField;
@@ -97,8 +92,7 @@ public class MainController implements Initializable {
         iniWorker = new IniWorker("gintool.ini");
         setFieldValuesFromIni();
         languageBox.valueProperty().addListener((ov, t, t1) -> {
-            if(!t1.equals(previousLocale)){
-                previousLocale = t1;
+            if(!I18N.getLocale().equals(t1)){
                 iniWorker.setLocale(t1);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setHeaderText(I18N.get("confirmation"));
@@ -113,14 +107,18 @@ public class MainController implements Initializable {
                     try {
                         pb.start();
                     } catch (IOException ex) {
-                        
+                        ex.printStackTrace();
+                        AlertWorker.showAlert(Alert.AlertType.ERROR,
+                                I18N.get("error"),
+                                I18N.get("error"));
+                        iniWorker.setLocale(t);
+                        languageBox.setValue(t);
+                        return;
                     }
                     System.exit(0);
                 }
             }
-            
         });
-        // value fields contain only numbers
         minRPMField.textProperty().addListener((observable, oldValue, newValue) -> {
             try{
                 float x = Float.parseFloat(newValue);
@@ -267,8 +265,7 @@ public class MainController implements Initializable {
         aclDclBox.getSelectionModel().select(iniWorker.getAclDcl());
         carNumberField.setText(String.format("%02d", iniWorker.getCarNumber()));
         decelCB.setSelected(iniWorker.isDecel());
-        previousLocale = iniWorker.getLocale();
-        languageBox.setValue(previousLocale);
+        languageBox.setValue(iniWorker.getLocale());
     }
 
     @FXML

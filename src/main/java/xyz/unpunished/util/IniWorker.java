@@ -56,7 +56,7 @@ public class IniWorker {
         enEx = 0;
         aclDcl = 0;
         firstLaunch = true;
-        locale = Locale.ENGLISH;
+        locale = I18N.getDefaultLocale();
     }
 
     private void readIniFile(File ini){

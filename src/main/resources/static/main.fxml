@@ -14,7 +14,7 @@
    <children>
       <SplitPane fx:id="splitPane" dividerPositions="0.5" layoutX="83.0" layoutY="49.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane maxWidth="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
+          <AnchorPane maxWidth="200.0" minWidth="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
                <children>
                   <Label layoutX="10.0" layoutY="14.0" maxWidth="180.0" text="%main" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="15.0" />
                   <VBox layoutX="10.0" layoutY="42.0" maxWidth="180.0" spacing="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="40.0">
