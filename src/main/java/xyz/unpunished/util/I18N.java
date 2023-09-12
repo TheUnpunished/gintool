@@ -20,7 +20,8 @@ public final class I18N {
                 new Locale("ru", "RU"),
                 new Locale("es", "US"),
                 new Locale("hr", "HR"),
-                Locale.GERMAN));
+                Locale.GERMAN,
+                new Locale("ro", "RO")));
     }
     
     
