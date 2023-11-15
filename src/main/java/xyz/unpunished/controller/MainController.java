@@ -102,7 +102,7 @@ public class MainController implements Initializable {
                 if(bt.get().equals(ButtonType.OK)){
                     fileThread.interrupt();
                     iniWorker.rewriteIni(iniWorker.getDefaultIni());
-                    ProcessBuilder pb = new ProcessBuilder("launchGin.bat");
+                    ProcessBuilder pb = new ProcessBuilder("launchGIN.bat");
                     pb = pb.inheritIO();
                     try {
                         pb.start();
@@ -397,7 +397,7 @@ public class MainController implements Initializable {
             }
             if(fileTypes.length > 1){
                 FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                        "All Supported Audio Files",
+                        I18N.get("all_supported_formats"),
                         fileTypes
                 );
                 fc.getExtensionFilters().add(filter);
